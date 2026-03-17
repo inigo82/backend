@@ -1,7 +1,10 @@
-const express = require("express");
-const cors = require("cors");
+import dotenv from "dotenv";
+dotenv.config();
 
-const authRoutes = require("./routes/auth");
+import express from "express";
+import cors from "cors";
+import { pool } from "./db.js";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
 
@@ -12,6 +15,16 @@ app.use("/auth", authRoutes);
 
 app.get("/", (req,res)=>{
     res.send("API running");
+});
+
+app.get("/test-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM users");
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error en la BD 1");
+  }
 });
 
 const PORT = process.env.PORT || 3000;
