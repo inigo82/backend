@@ -42,6 +42,7 @@ console.log("fin 1");
     res.json({
       token,
       role: user.role,
+      id: user.id
     });
 
 console.log("fin");
