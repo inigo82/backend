@@ -14,14 +14,13 @@ router.post("/", async (req, res) => {
       RETURNING id
     `;
 
-    await pool.query(query, [
+    const resultDB=await pool.query(query, [
       name,
       JSON.stringify({ nodes, edges }),
       JSON.stringify(result),
       profesor_id
     ]);
-
-    res.json({ id: result.rows[0].id });
+    res.json({ id: resultDB.rows[0].id });
 
   } catch (err) {
     console.error(err);
