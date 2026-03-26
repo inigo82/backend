@@ -28,6 +28,19 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM circuits WHERE id=$1",
+      [req.params.id]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    res.status(500).json({ error: "Error obteniendo circuito" });
+  }
+});
 
 router.get("/profesor/:id", async (req, res) => {
   try {
