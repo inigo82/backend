@@ -4,18 +4,20 @@ import { pool } from "../db.js";
 const router = express.Router(); 
 
 router.post("/", async (req, res) => {
-  const { nodes, edges, profesor_id } = req.body;
+  const { name, nodes, edges, result, profesor_id } = req.body;
 
   try {
     const query = `
       INSERT INTO circuits 
-      (data, profesor_id, status, created_at)
-      VALUES ($1, $2, 'borrador', NOW())
+      (name, data, result, profesor_id, status, created_at)
+      VALUES ($1, $2, $3, $4, 'borrador', NOW())
       RETURNING id
     `;
 
-    const result = await pool.query(query, [
+    await pool.query(query, [
+      name,
       JSON.stringify({ nodes, edges }),
+      JSON.stringify(result),
       profesor_id
     ]);
 
