@@ -28,4 +28,65 @@ router.post("/", async (req, res) => {
   }
 });
 
+
+router.get("/profesor/:id", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM circuits WHERE profesor_id = $1 ORDER BY created_at DESC",
+      [req.params.id]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo circuitos" });
+  }
+});
+
+
+router.delete("/:id", async (req, res) => {
+  try {
+    await pool.query("DELETE FROM circuits WHERE id=$1", [req.params.id]);
+    res.json({ message: "Eliminado" });
+  } catch (err) {
+    res.status(500).json({ error: "Error eliminando" });
+  }
+});
+
+router.put("/publish/:id", async (req, res) => {
+  const { due_date } = req.body;
+
+  try {
+    await pool.query(
+      `UPDATE circuits
+       SET status='publicado',
+           published_at=NOW(),
+           due_date=$1
+       WHERE id=$2`,
+      [due_date, req.params.id]
+    );
+
+    res.json({ message: "Publicado" });
+
+  } catch (err) {
+    res.status(500).json({ error: "Error publicando" });
+  }
+});
+
+router.put("/finish/:id", async (req, res) => {
+  try {
+    await pool.query(
+      `UPDATE circuits
+       SET status='cerrado'
+       WHERE id=$1`,
+      [req.params.id]
+    );
+
+    res.json({ message: "Finalizado" });
+
+  } catch (err) {
+    res.status(500).json({ error: "Error cerrando" });
+  }
+});
 export default router;
