@@ -6,6 +6,7 @@ import cors from "cors";
 import { pool } from "./db.js";
 import authRoutes from "./routes/auth.js";
 import circuitsRoutes from "./routes/circuits.js";
+import submissionsRoutes from "./routes/submissions.js";
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use("/circuits", circuitsRoutes);
-
+app.use("/submissions", submissionsRoutes);
 app.get("/", (req,res)=>{
     res.send("API running");
 });

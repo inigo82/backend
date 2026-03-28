@@ -102,4 +102,37 @@ router.put("/finish/:id", async (req, res) => {
     res.status(500).json({ error: "Error cerrando" });
   }
 });
+
+router.get("/student/:id", async (req, res) => {
+  const studentId = req.params.id;
+
+  try {
+    const result = await pool.query(`
+      SELECT 
+        c.id,
+        c.name,
+        c.status,
+        c.created_at,
+        c.published_at,
+        c.due_date,
+        s.grade,
+        s.id AS submission_id
+      FROM circuits c
+      JOIN teacher_students ts 
+        ON ts.teacher_id = c.profesor_id
+      LEFT JOIN submissions s 
+        ON s.circuit_id = c.id 
+        AND s.student_id = $1
+      WHERE ts.student_id = $1
+        AND c.status IN ('publicado', 'cerrado')
+      ORDER BY c.published_at DESC
+    `, [studentId]);
+
+    res.json(result.rows);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo circuitos del alumno" });
+  }
+});
 export default router;
