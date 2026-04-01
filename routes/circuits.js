@@ -135,4 +135,44 @@ router.get("/student/:id", async (req, res) => {
     res.status(500).json({ error: "Error obteniendo circuitos del alumno" });
   }
 });
+
+router.get("/:id/submissions", async (req, res) => {
+  const circuitId = req.params.id;
+
+  try {
+    //  Obtener resultados correctos
+    const circuitResult = await pool.query(
+      "SELECT data, result FROM circuits WHERE id = $1",
+      [circuitId]
+    );
+
+    const correct = circuitResult.rows[0]?.result;
+    const nodes = circuitResult.rows[0].data.nodes;
+
+    // Obtener submissions
+    const submissionsResult = await pool.query(`
+      SELECT 
+        u.usuario,
+        s.grade,
+        s.solution
+      FROM submissions s
+      JOIN users u ON u.id = s.student_id
+      WHERE s.circuit_id = $1
+      ORDER BY s.submitted_at DESC
+    `, [circuitId]);
+
+    
+
+    res.json({
+      correct,
+      nodes, 
+      submissions: submissionsResult.rows
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo notas" });
+  }
+});
+
 export default router;

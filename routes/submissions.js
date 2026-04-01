@@ -47,4 +47,26 @@ router.get("/:id/submissions", async (req, res) => {
   }
 });
 
+router.get("/student/:studentId/circuit/:circuitId", async (req, res) => {
+  const { studentId, circuitId } = req.params;
+
+  try {
+    const result = await pool.query(`
+      SELECT solution, grade
+      FROM submissions
+      WHERE student_id = $1 AND circuit_id = $2
+    `, [studentId, circuitId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No submission found" });
+    }
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo submission" });
+  }
+});
+
 export default router;
