@@ -12,7 +12,7 @@ router.post("/login", async (req, res) => {
 
   try {
     // 1️⃣ Buscar usuario en la base de datos
-    const query = "SELECT * FROM users WHERE usuario=$1";
+    const query = "SELECT * FROM users WHERE LOWER(usuario)=LOWER($1)";
     const result = await pool.query(query, [email]);
 
 
@@ -36,8 +36,6 @@ router.post("/login", async (req, res) => {
       "visor", 
       { expiresIn: "2h" }
     );
-
-console.log("fin 1");
     // 4️Devolver token y rol
     res.json({
       token,
@@ -45,8 +43,6 @@ console.log("fin 1");
       id: user.id,
       user: user.usuario
     });
-
-console.log("fin");
 
   } catch (err) {
     console.error(err);
