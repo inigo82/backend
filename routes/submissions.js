@@ -31,7 +31,7 @@ router.get("/:id/submissions", async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT 
-        u.username,
+        u.usuario,
         s.grade,
         s.submitted_at
       FROM submissions s
