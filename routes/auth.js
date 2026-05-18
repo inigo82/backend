@@ -11,7 +11,7 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // 1️⃣ Buscar usuario en la base de datos
+    // 1️ Buscar usuario en la base de datos
     const query = "SELECT * FROM users WHERE LOWER(usuario)=LOWER($1)";
     const result = await pool.query(query, [email]);
 
